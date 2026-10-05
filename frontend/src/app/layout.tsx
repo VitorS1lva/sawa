@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#2a2a2e",
+  // Ocupa a tela toda no iPhone; o notch e a barra de gestos são tratados com env(safe-area-inset-*).
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

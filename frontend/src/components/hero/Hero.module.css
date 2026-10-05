@@ -9,8 +9,8 @@
 
 /* Área do rubi 3D */
 .model {
-  width: min(42vh, 380px);
-  height: min(42vh, 380px);
+  width: min(42svh, 80vw, 380px);
+  height: min(42svh, 80vw, 380px);
 }
 
 .content {
@@ -37,4 +37,37 @@
   font-size: 1rem;
   font-weight: 300;
   color: var(--sawa-text-muted);
+}
+
+/* Celular e tablet em pé: o menu fica mais alto (abaixo do notch). */
+@media (max-width: 1024px) {
+  .hero {
+    padding: calc(env(safe-area-inset-top) + 96px) 16px 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: clamp(3.25rem, 17vw, 5rem);
+  }
+
+  .subtitle {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Celular deitado: pouca altura, então o rubi diminui. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero {
+    padding-top: 88px;
+  }
+
+  .model {
+    width: 34svh;
+    height: 34svh;
+  }
+
+  .title {
+    font-size: clamp(3rem, 16svh, 5rem);
+  }
 }

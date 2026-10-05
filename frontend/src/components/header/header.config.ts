@@ -3,6 +3,8 @@ export type PanelId = "about" | "features-atuais" | "features-futuras" | "discla
 
 export const headerConfig = {
   brand: "sawa",
+  /** Abaixo desta largura (celulares e iPads em pé) o menu vira um botão hambúrguer. Igual ao Header.module.css. */
+  mobileQuery: "(max-width: 1024px)",
   items: [
     { id: "about", label: "Sobre", accent: false },
     { id: "features-atuais", label: "Features atuais", accent: false },

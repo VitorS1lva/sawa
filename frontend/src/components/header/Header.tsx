@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ChevronLeft, Menu, X } from "lucide-react";
 import { aboutPanel } from "@/components/about-panel/AboutPanel.configs";
 import { featuresAtuaisPanel } from "@/components/features-atuais-panel/FeaturesAtuaisPanel.configs";
 import { featuresFuturasPanel } from "@/components/features-futuras-panel/FeaturesFuturasPanel.configs";
@@ -10,6 +11,7 @@ import { loginConfig, signupConfig } from "@/components/auth-form/auth.config";
 import { Popover } from "@/components/popover/Popover";
 import { headerConfig, type PanelId } from "./header.config";
 import { RubyViewer } from "@/components/ruby/RubyViewer";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 import styles from "./Header.module.css";
 import { AboutPanel } from "../about-panel/AboutPanel";
 import { DisclaimerPanel } from "../disclaimer-panel/DisclaimerPanel";
@@ -20,22 +22,41 @@ import { FeaturesFuturasPanel } from "../features-futuras-panel/FeaturesFuturasP
  * Menu principal suspenso.
  * Cada botão abre um balão em vez de navegar para outra página.
  * Apenas um balão fica aberto por vez; clicar fora ou apertar Esc fecha.
+ *
+ * No celular e no tablet em pé, os botões ficam numa gaveta aberta pelo botão hambúrguer.
+ * Tocar num item mostra o conteúdo do balão dentro da própria gaveta, com um botão de voltar.
  */
 export function Header() {
   const [openPanel, setOpenPanel] = useState<PanelId | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const isMobile = useMediaQuery(headerConfig.mobileQuery);
   const barRef = useRef<HTMLDivElement>(null);
 
+  const sheetOpen = isMobile && menuOpen;
+
+  function closeAll() {
+    setOpenPanel(null);
+    setMenuOpen(false);
+  }
+
   useEffect(() => {
-    if (!openPanel) return;
+    if (!openPanel && !menuOpen) return;
 
     function handlePointerDown(event: PointerEvent) {
       if (barRef.current && !barRef.current.contains(event.target as Node)) {
         setOpenPanel(null);
+        setMenuOpen(false);
       }
     }
 
+    // Na gaveta, o Esc primeiro volta para a lista; no desktop, fecha o balão.
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpenPanel(null);
+      if (event.key !== "Escape") return;
+      if (menuOpen && openPanel) setOpenPanel(null);
+      else {
+        setOpenPanel(null);
+        setMenuOpen(false);
+      }
     }
 
     document.addEventListener("pointerdown", handlePointerDown);
@@ -44,7 +65,7 @@ export function Header() {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [openPanel]);
+  }, [openPanel, menuOpen]);
 
   // Título e conteúdo de cada balão.
   const panels: Record<PanelId, { title: string; content: ReactNode }> = {
@@ -90,7 +111,7 @@ export function Header() {
                   {item.label}
                 </button>
 
-                {isOpen && (
+                {isOpen && !isMobile && (
                   <Popover id={popoverId} title={panels[item.id].title}>
                     {panels[item.id].content}
                   </Popover>
@@ -99,6 +120,47 @@ export function Header() {
             );
           })}
         </nav>
+
+        <button
+          type="button"
+          className={styles.menuToggle}
+          aria-expanded={sheetOpen}
+          aria-controls="menu-mobile"
+          aria-label={sheetOpen ? "Fechar menu" : "Abrir menu"}
+          onClick={() => (sheetOpen ? closeAll() : setMenuOpen(true))}
+        >
+          {sheetOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+        </button>
+
+        {sheetOpen && (
+          <div id="menu-mobile" className={styles.sheet}>
+            {openPanel ? (
+              <>
+                <button type="button" className={styles.back} onClick={() => setOpenPanel(null)}>
+                  <ChevronLeft aria-hidden="true" />
+                  Menu
+                </button>
+                <Popover id={`popover-${openPanel}`} title={panels[openPanel].title} inline>
+                  {panels[openPanel].content}
+                </Popover>
+              </>
+            ) : (
+              <nav className={styles.sheetNav} aria-label="Menu principal">
+                {headerConfig.items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={styles.sheetItem}
+                    data-accent={item.accent}
+                    onClick={() => setOpenPanel(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
