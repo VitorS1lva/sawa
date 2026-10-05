@@ -15,4 +15,4 @@ __pycache__/
 # Sistema e editor
 .DS_Store
 .vscode/*
-!.vscode/extensions.json
+!.vscode/extensions.json*:Zone.Identifier
