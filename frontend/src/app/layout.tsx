@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./theme.css";
 import { bodyFont, titleFont } from "./fonts";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "sawa",
@@ -21,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${titleFont.variable} ${bodyFont.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

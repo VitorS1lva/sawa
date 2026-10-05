@@ -14,7 +14,8 @@
   position: relative;
   pointer-events: auto;
   width: 85%;
-  max-width: 1120px;
+  /* Páginas mais largas (ex.: área do usuário) podem aumentar este limite. */
+  max-width: var(--header-max-width, 1120px);
   display: flex;
   align-items: center;
   justify-content: space-between;
