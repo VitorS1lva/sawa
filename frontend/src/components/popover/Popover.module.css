@@ -65,15 +65,8 @@
   }
 }
 
-@media (max-width: 640px) {
-  .popover {
-    left: 0;
-    right: 0;
-    width: auto;
-    transform-origin: top center;
-  }
-
-  .popover::before {
-    display: none;
-  }
+/* Dentro da gaveta do menu no celular. */
+.inline {
+  padding: 4px 6px 8px;
+  color: var(--sawa-text);
 }

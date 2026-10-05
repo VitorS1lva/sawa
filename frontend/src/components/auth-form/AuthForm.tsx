@@ -7,13 +7,15 @@ import styles from "./AuthForm.module.css";
 type AuthFormProps = {
   config: AuthFormConfig;
   /** Chamado ao clicar no link de troca (ex.: do login para o cadastro). */
-  onSwitch: () => void;
+  onSwitch?: () => void;
+  /** Chamado quando o envio dá certo (ex.: levar para a área do usuário após o login). */
+  onSuccess?: () => void;
 };
 
 type Feedback = { status: "success" | "error"; message: string } | null;
 
-/** Formulário de login ou cadastro, montado a partir do auth.config.ts. */
-export function AuthForm({ config, onSwitch }: AuthFormProps) {
+/** Formulário de login, cadastro ou dados da conta, montado a partir de um AuthFormConfig. */
+export function AuthForm({ config, onSwitch, onSuccess }: AuthFormProps) {
   const [feedback, setFeedback] = useState<Feedback>(null);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -30,6 +32,10 @@ export function AuthForm({ config, onSwitch }: AuthFormProps) {
     }
 
     // TODO: enviar para a API Django quando o back-end estiver pronto.
+    if (onSuccess) {
+      onSuccess();
+      return;
+    }
     setFeedback({ status: "success", message: config.successMessage });
   }
 
@@ -60,12 +66,14 @@ export function AuthForm({ config, onSwitch }: AuthFormProps) {
         {config.submitLabel}
       </button>
 
-      <p className={styles.switch}>
-        {config.switchText}{" "}
-        <button type="button" className={styles.link} onClick={onSwitch}>
-          {config.switchLabel}
-        </button>
-      </p>
+      {config.switchLabel && onSwitch && (
+        <p className={styles.switch}>
+          {config.switchText}{" "}
+          <button type="button" className={styles.link} onClick={onSwitch}>
+            {config.switchLabel}
+          </button>
+        </p>
+      )}
     </form>
   );
 }

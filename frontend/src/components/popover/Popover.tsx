@@ -7,10 +7,12 @@ type PopoverProps = {
   id: string;
   title: string;
   children: ReactNode;
+  /** Sem posição nem moldura próprias, para aparecer dentro da gaveta do menu no celular. */
+  inline?: boolean;
 };
 
 /** Balão que aparece abaixo de um botão do menu. */
-export function Popover({ id, title, children }: PopoverProps) {
+export function Popover({ id, title, children, inline = false }: PopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   // Ao abrir, coloca o foco no primeiro campo (facilita o uso pelo teclado).
@@ -24,7 +26,7 @@ export function Popover({ id, title, children }: PopoverProps) {
       id={id}
       role="dialog"
       aria-labelledby={`${id}-title`}
-      className={styles.popover}
+      className={inline ? styles.inline : styles.popover}
     >
       <h2 id={`${id}-title`} className={styles.title}>
         {title}

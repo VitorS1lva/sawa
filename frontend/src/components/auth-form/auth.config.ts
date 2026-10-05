@@ -16,9 +16,9 @@ export type AuthFormConfig = {
   submitLabel: string;
   successMessage: string;
   mismatchMessage?: string;
-  /** Link no rodapé do balão para trocar de formulário. */
-  switchText: string;
-  switchLabel: string;
+  /** Link no rodapé do balão para trocar de formulário (opcional). */
+  switchText?: string;
+  switchLabel?: string;
 };
 
 export const loginConfig: AuthFormConfig = {

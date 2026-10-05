@@ -1,0 +1,35 @@
+/* A área do usuário ocupa exatamente a altura da tela; cada painel rola por dentro. */
+.page {
+  --header-max-width: 1600px;
+  height: 100svh;
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  /* Espaço para o menu fixo; o padding lateral é o mesmo do header, para alinhar. */
+  padding: 108px 16px 20px;
+}
+
+@media (max-width: 1024px) {
+  /* No celular a página rola, para as listas não ficarem espremidas. */
+  .page {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .main {
+    padding-top: calc(env(safe-area-inset-top) + 88px);
+    padding-bottom: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

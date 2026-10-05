@@ -1,0 +1,225 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 16px;
+  background-color: var(--sawa-surface);
+  border: 1px solid var(--sawa-border);
+  border-radius: var(--sawa-radius);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-title), Georgia, serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+/* Losango na cor do rubi, como nos balões. */
+.title::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background-color: var(--sawa-accent);
+  transform: rotate(45deg);
+}
+
+.clear {
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--sawa-text-muted);
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.clear:hover {
+  color: var(--sawa-text);
+  background-color: var(--sawa-hover);
+}
+
+/* ---------- Busca ---------- */
+
+.search {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--sawa-text-muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--sawa-text);
+  background-color: var(--sawa-surface-deep);
+  border: 1px solid var(--sawa-border);
+  border-radius: calc(var(--sawa-radius) - 4px);
+  padding: 8px 12px 8px 34px;
+}
+
+.searchInput::placeholder {
+  color: var(--sawa-text-muted);
+  opacity: 0.6;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--sawa-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sawa-accent) 25%, transparent);
+}
+
+.hint {
+  margin: 0 0 6px;
+  font-size: 0.75rem;
+  color: var(--sawa-text-muted);
+}
+
+/* ---------- Lista ---------- */
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  /* Quem usa a lista pode limitar a altura (ex.: no celular, onde a página rola). */
+  max-height: var(--list-max-height, none);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.item:hover {
+  background-color: var(--sawa-hover);
+}
+
+.item[data-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* O input nativo fica invisível, mas continua acessível pelo teclado e leitores de tela. */
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* Caixinha desenhada. */
+.box {
+  position: relative;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--sawa-text-muted);
+  border-radius: 4px;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.input:checked + .box {
+  background-color: var(--sawa-accent);
+  border-color: var(--sawa-accent);
+}
+
+/* Marca de "check". */
+.input:checked + .box::after {
+  content: "";
+  position: absolute;
+  left: 4.5px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--sawa-text);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.input:focus-visible + .box {
+  outline: 2px solid var(--sawa-accent);
+  outline-offset: 2px;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--sawa-text);
+}
+
+.description {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.75rem;
+  color: var(--sawa-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Cor da linha no gráfico. */
+.swatch {
+  flex-shrink: 0;
+  width: 14px;
+  height: 3px;
+  margin-left: auto;
+  border-radius: 2px;
+}
+
+.status {
+  margin: 8px 2px;
+  font-size: 0.8125rem;
+  color: var(--sawa-text-muted);
+}
+
+@media (max-width: 1024px) {
+  /* Evita o zoom automático do iPhone ao focar o campo. */
+  .searchInput {
+    font-size: 1rem;
+  }
+
+  .item {
+    min-height: 44px;
+  }
+}
