@@ -1,0 +1,22 @@
+.footer {
+  text-align: center;
+  padding: 16px 16px;
+  border-top: 1px solid var(--sawa-border);
+}
+
+.link {
+  color: var(--sawa-text);
+  text-decoration: underline;
+  text-decoration-color: var(--sawa-accent);
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--sawa-accent-hover);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--sawa-accent);
+  outline-offset: 3px;
+}

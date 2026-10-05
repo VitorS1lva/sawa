@@ -1,0 +1,25 @@
+import type { Metadata, Viewport } from "next";
+import "./globals.css";
+import "./theme.css";
+import { bodyFont, titleFont } from "./fonts";
+
+export const metadata: Metadata = {
+  title: "sawa",
+  description: "Previsões de ações da B3 e dos EUA com inteligência artificial.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2a2a2e",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="pt-BR" className={`${titleFont.variable} ${bodyFont.variable}`}>
+      <body>{children}</body>
+    </html>
+  );
+}

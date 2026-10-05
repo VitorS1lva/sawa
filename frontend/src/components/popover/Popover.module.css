@@ -1,0 +1,79 @@
+.popover {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  z-index: 60;
+  width: 340px;
+  padding: 22px;
+  color: var(--sawa-text);
+  background-color: var(--sawa-surface);
+  border: 1px solid var(--sawa-border);
+  border-radius: var(--sawa-radius);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  transform-origin: top right;
+  animation: pop-in 0.18s ease-out;
+}
+
+/* "Biquinho" do balão apontando para o botão. */
+.popover::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  right: 24px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--sawa-surface);
+  border-top: 1px solid var(--sawa-border);
+  border-left: 1px solid var(--sawa-border);
+  transform: rotate(45deg);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-family: var(--font-title), Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+/* Pequeno detalhe na cor do rubi. */
+.title::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background-color: var(--sawa-accent);
+  transform: rotate(45deg);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popover {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .popover {
+    left: 0;
+    right: 0;
+    width: auto;
+    transform-origin: top center;
+  }
+
+  .popover::before {
+    display: none;
+  }
+}

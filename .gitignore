@@ -1,0 +1,18 @@
+# Node
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Sistema e editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,51 @@
+/*
+ * Paleta do sawa.
+ * As cores são variáveis CSS usadas por todos os componentes.
+ */
+:root {
+  --sawa-bg: #2a2a2e;
+  --sawa-surface: #232327; /* balões */
+  --sawa-surface-deep: #1c1c1f; /* campos de formulário */
+  --sawa-accent: #8f1d2c; /* cor do rubi, para pequenos detalhes */
+  --sawa-accent-hover: #a72437;
+  --sawa-text: #cfcfd4;
+  --sawa-text-muted: #9a9aa2;
+  --sawa-border: rgb(207 207 212 / 0.12);
+  --sawa-hover: rgb(207 207 212 / 0.06);
+  --sawa-radius: 14px;
+
+  /* Liga as variáveis do shadcn/ui à paleta, para componentes futuros. */
+  --background: var(--sawa-bg);
+  --foreground: var(--sawa-text);
+  --card: var(--sawa-surface);
+  --card-foreground: var(--sawa-text);
+  --popover: var(--sawa-surface);
+  --popover-foreground: var(--sawa-text);
+  --primary: var(--sawa-accent);
+  --primary-foreground: var(--sawa-text);
+  --muted: var(--sawa-surface-deep);
+  --muted-foreground: var(--sawa-text-muted);
+  --border: var(--sawa-border);
+  --input: var(--sawa-border);
+  --ring: var(--sawa-accent);
+
+  color-scheme: dark;
+}
+
+html {
+  background-color: var(--sawa-bg);
+}
+
+body {
+  margin: 0;
+  background-color: var(--sawa-bg);
+  color: var(--sawa-text);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: var(--sawa-accent);
+  color: var(--sawa-text);
+}
