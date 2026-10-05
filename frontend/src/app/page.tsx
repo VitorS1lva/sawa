@@ -1,12 +1,12 @@
 import { Footer } from "@/components/footer/Footer";
-import { Header } from "@/components/header/Header";
+import { LandingHeader } from "@/components/header/LandingHeader";
 import { Hero } from "@/components/hero/Hero";
 import styles from "./page.module.css";
 
 export default function Home() {
   return (
     <div className={styles.page}>
-      <Header />
+      <LandingHeader />
       <main className={styles.main}>
         <Hero />
       </main>
