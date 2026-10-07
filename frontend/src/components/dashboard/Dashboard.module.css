@@ -15,12 +15,16 @@
   min-height: 0;
 }
 
-/* Bolsas em cima (menor) e ações embaixo. */
+/* Escopo no topo; depois bolsas (menor) e ações, ou só as notícias da Selic. */
 .assets {
   display: grid;
-  grid-template-rows: minmax(0, 2fr) minmax(0, 3fr);
+  grid-template-rows: auto minmax(0, 2fr) minmax(0, 3fr);
   gap: 16px;
   min-height: 0;
+}
+
+.assets[data-scope="selic"] {
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 /* As abas só existem no celular e no tablet em pé. */
@@ -95,8 +99,15 @@
     min-height: 440px;
   }
 
-  .assets {
-    grid-template-rows: auto auto;
+  .assets,
+  .assets[data-scope="selic"] {
+    grid-template-rows: none;
+  }
+
+  /* O feed tem a mesma altura do chat e do gráfico, descontado o seletor de escopo. */
+  .newsFeed {
+    height: calc(100svh - env(safe-area-inset-top) - 236px);
+    min-height: 380px;
   }
 
   /* Cerca de quatro bolsas visíveis; o resto rola dentro da lista. */

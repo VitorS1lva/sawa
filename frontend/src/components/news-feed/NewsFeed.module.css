@@ -1,0 +1,95 @@
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+
+.list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Linha fina entre as notícias. */
+.list > li + li {
+  border-top: 1px solid var(--sawa-border);
+}
+
+.item {
+  display: grid;
+  gap: 4px;
+  padding: 12px 2px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.6875rem;
+  color: var(--sawa-text-muted);
+}
+
+/* Sentimento: ícone + texto, nunca só a cor. */
+.sentiment {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  padding: 1px 6px 1px 4px;
+  color: var(--sawa-text);
+  background-color: var(--sawa-surface-deep);
+  border-radius: 999px;
+}
+
+.sentiment svg {
+  width: 12px;
+  height: 12px;
+}
+
+.headline {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--sawa-text);
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--sawa-accent);
+  text-underline-offset: 3px;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--sawa-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.summary {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--sawa-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.status {
+  margin: 8px 2px;
+  font-size: 0.8125rem;
+  color: var(--sawa-text-muted);
+}

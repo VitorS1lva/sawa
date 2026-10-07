@@ -16,9 +16,43 @@
 
 /* ---------- Busca ---------- */
 
+.searchRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .search {
   position: relative;
-  margin-bottom: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Botão "só favoritos" ao lado da busca. */
+.favoritesFilter {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  color: var(--sawa-text-muted);
+  background-color: var(--sawa-surface-deep);
+  border: 1px solid var(--sawa-border);
+  border-radius: calc(var(--sawa-radius) - 4px);
+  cursor: pointer;
+}
+
+.favoritesFilter:hover {
+  color: var(--sawa-text);
+}
+
+.favoritesFilter[aria-pressed="true"] {
+  color: var(--sawa-accent-hover);
+  border-color: var(--sawa-accent);
+}
+
+.favoritesFilter svg {
+  width: 16px;
+  height: 16px;
 }
 
 .searchIcon {
@@ -79,8 +113,21 @@
   list-style: none;
 }
 
+/* Linha: item marcável + estrela de favorito. */
+.row {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.row:hover {
+  background-color: var(--sawa-hover);
+}
+
 .item {
   position: relative;
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -89,10 +136,6 @@
   border-radius: 8px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-}
-
-.item:hover {
-  background-color: var(--sawa-hover);
 }
 
 .item[data-disabled="true"] {
@@ -169,6 +212,47 @@
   border-radius: 2px;
 }
 
+/* Estrela de favorito: discreta até passar o mouse; na cor do rubi quando marcada. */
+.star {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-right: 2px;
+  color: var(--sawa-text-muted);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  opacity: 0.45;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.row:hover .star,
+.star:focus-visible {
+  opacity: 1;
+}
+
+.star[aria-pressed="true"] {
+  color: var(--sawa-accent-hover);
+  opacity: 1;
+}
+
+.star svg {
+  width: 16px;
+  height: 16px;
+}
+
+.star:focus-visible,
+.favoritesFilter:focus-visible {
+  outline: 2px solid var(--sawa-accent);
+  outline-offset: 1px;
+}
+
 .status {
   margin: 8px 2px;
   font-size: 0.8125rem;
@@ -183,5 +267,12 @@
 
   .item {
     min-height: 44px;
+  }
+
+  /* Alvo de toque confortável e estrela sempre visível (não há "hover" no celular). */
+  .star {
+    width: 44px;
+    height: 44px;
+    opacity: 0.7;
   }
 }

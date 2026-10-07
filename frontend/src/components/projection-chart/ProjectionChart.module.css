@@ -15,10 +15,15 @@
   font-size: 0.8125rem;
 }
 
+/* Cada parte fica inteira, mas a linha pode quebrar entre elas (a acurácia deixa o texto longo). */
 .legendItem {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 2px 6px;
+}
+
+.legendItem > span {
   white-space: nowrap;
 }
 
@@ -93,6 +98,33 @@
 
 .keyDashed {
   border-top-style: dashed;
+}
+
+/* Realidade: linha contínua com pontos, como no gráfico. */
+.keyActual {
+  position: relative;
+  width: 18px;
+  height: 0;
+  border-top: 2px solid var(--sawa-text-muted);
+}
+
+.keyActual::before,
+.keyActual::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--sawa-text-muted);
+}
+
+.keyActual::before {
+  left: 1px;
+}
+
+.keyActual::after {
+  right: 1px;
 }
 
 .disclaimer {

@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 import { Card } from "@/components/card/Card";
-import { Search } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import styles from "./CheckList.module.css";
 
 export type CheckListItem = {
@@ -28,6 +28,9 @@ type CheckListProps = {
   error?: string | null;
   emptyText: string;
   className?: string;
+  /** Ids favoritados: aparecem no topo. Sem `onToggleFavorite`, a lista não mostra estrelas. */
+  favorites?: string[];
+  onToggleFavorite?: (id: string, favorite: boolean) => void;
 };
 
 /** Ignora maiúsculas e acentos ao filtrar ("itau" encontra "Itaú"). */
@@ -49,15 +52,24 @@ export function CheckList({
   error = null,
   emptyText,
   className,
+  favorites = [],
+  onToggleFavorite,
 }: CheckListProps) {
   const [query, setQuery] = useState("");
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
   const name = useId();
 
+  // Filtra pela busca (e, se pedido, só favoritos) e põe os favoritos no topo.
   const filtered = useMemo(() => {
     const term = normalize(query.trim());
-    if (!term) return items;
-    return items.filter((item) => normalize(`${item.label} ${item.description ?? ""}`).includes(term));
-  }, [items, query]);
+    const favoriteSet = new Set(favorites);
+    const visible = items.filter(
+      (item) =>
+        (!onlyFavorites || favoriteSet.has(item.id)) &&
+        (!term || normalize(`${item.label} ${item.description ?? ""}`).includes(term)),
+    );
+    return [...visible.filter((i) => favoriteSet.has(i.id)), ...visible.filter((i) => !favoriteSet.has(i.id))];
+  }, [items, query, favorites, onlyFavorites]);
 
   const limitReached = multiple && max !== undefined && selected.length >= max;
 
@@ -81,16 +93,20 @@ export function CheckList({
       </p>
     );
   } else if (filtered.length === 0) {
-    body = <p className={styles.status}>{query ? "Nada encontrado." : emptyText}</p>;
+    let message = emptyText;
+    if (query) message = "Nada encontrado.";
+    else if (onlyFavorites) message = "Nenhum favorito ainda. Toque na estrela de um item para favoritá-lo.";
+    body = <p className={styles.status}>{message}</p>;
   } else {
     body = (
       <ul className={styles.list}>
         {filtered.map((item) => {
           const checked = selected.includes(item.id);
           const color = checked ? colors?.[item.id] : undefined;
+          const favorite = favorites.includes(item.id);
 
           return (
-            <li key={item.id}>
+            <li key={item.id} className={styles.row}>
               <label className={styles.item} data-disabled={!checked && limitReached}>
                 <input
                   className={styles.input}
@@ -105,6 +121,19 @@ export function CheckList({
                 {item.description && <span className={styles.description}>{item.description}</span>}
                 {color && <span className={styles.swatch} style={{ backgroundColor: color }} aria-hidden="true" />}
               </label>
+              {/* Fora do <label>, para favoritar não marcar o item. */}
+              {onToggleFavorite && (
+                <button
+                  type="button"
+                  className={styles.star}
+                  aria-pressed={favorite}
+                  aria-label={favorite ? `Remover ${item.label} dos favoritos` : `Favoritar ${item.label}`}
+                  title={favorite ? "Remover dos favoritos" : "Favoritar"}
+                  onClick={() => onToggleFavorite(item.id, !favorite)}
+                >
+                  <Star aria-hidden="true" fill={favorite ? "currentColor" : "none"} />
+                </button>
+              )}
             </li>
           );
         })}
@@ -126,16 +155,30 @@ export function CheckList({
       }
     >
 
-      <div className={styles.search}>
-        <Search className={styles.searchIcon} aria-hidden="true" />
-        <input
-          className={styles.searchInput}
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={searchPlaceholder}
-          aria-label={`Filtrar ${title.toLowerCase()}`}
-        />
+      <div className={styles.searchRow}>
+        <div className={styles.search}>
+          <Search className={styles.searchIcon} aria-hidden="true" />
+          <input
+            className={styles.searchInput}
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={searchPlaceholder}
+            aria-label={`Filtrar ${title.toLowerCase()}`}
+          />
+        </div>
+        {onToggleFavorite && (
+          <button
+            type="button"
+            className={styles.favoritesFilter}
+            aria-pressed={onlyFavorites}
+            aria-label="Mostrar só favoritos"
+            title="Mostrar só favoritos"
+            onClick={() => setOnlyFavorites((value) => !value)}
+          >
+            <Star aria-hidden="true" fill={onlyFavorites ? "currentColor" : "none"} />
+          </button>
+        )}
       </div>
 
       {limitReached && <p className={styles.hint}>Limite de {max} itens marcados.</p>}

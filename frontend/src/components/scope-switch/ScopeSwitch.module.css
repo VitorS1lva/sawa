@@ -1,0 +1,38 @@
+.card {
+  padding: 6px;
+}
+
+.group {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.option {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--sawa-text);
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.option:hover {
+  background-color: var(--sawa-hover);
+}
+
+@media (max-width: 1024px) {
+  .option {
+    min-height: 44px;
+  }
+}

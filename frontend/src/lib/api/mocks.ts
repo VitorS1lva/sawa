@@ -2,10 +2,23 @@
  * Dados de exemplo usados enquanto o back-end não existe (veja USE_MOCKS em config.ts).
  * Os preços são inventados, mas sempre iguais para o mesmo ticker.
  */
-import type { ChatMessage, ChatRequest, Exchange, ForecastPoint, Projection, SeriesPoint, Stock } from "./types";
+import type {
+  ChatMessage,
+  ChatRequest,
+  Exchange,
+  FavoriteKind,
+  Favorites,
+  ForecastPoint,
+  NewsItem,
+  Projection,
+  SeriesPoint,
+  Stock,
+} from "./types";
 
 const HISTORY_DAYS = 180;
 const FORECAST_DAYS = 30;
+/** A previsão de exemplo foi "feita" há tantos dias úteis; depois disso há dados reais para comparar. */
+const DAYS_SINCE_FORECAST = 20;
 
 /** Simula o tempo de resposta da rede. */
 function delay<T>(value: T, ms = 150): Promise<T> {
@@ -138,6 +151,17 @@ function businessDays(from: Date, count: number, direction: 1 | -1): string[] {
 
 const round = (value: number) => Math.round(value * 100) / 100;
 
+/** 100 − erro percentual médio (MAPE) entre previsão e realidade nas datas em comum. */
+function accuracyOf(forecast: SeriesPoint[], actual: SeriesPoint[]): number | undefined {
+  const predicted = new Map(forecast.map((point) => [point.time, point.value]));
+  const errors = actual
+    .filter((point) => predicted.has(point.time))
+    .map((point) => Math.abs(predicted.get(point.time)! - point.value) / point.value);
+  if (errors.length === 0) return undefined;
+  const mape = (errors.reduce((sum, error) => sum + error, 0) / errors.length) * 100;
+  return Math.round((100 - mape) * 10) / 10;
+}
+
 export function mockExchanges(): Promise<Exchange[]> {
   return delay(exchanges);
 }
@@ -158,20 +182,28 @@ export function mockProjection(ticker: string): Promise<Projection> {
   const random = seededRandom(ticker);
   const today = new Date();
 
-  // Passeio aleatório com leve tendência.
+  // Passeio aleatório com leve tendência: todos os preços "reais" até hoje.
   const drift = (random() - 0.45) * 0.002;
   let price = basePrice * (0.85 + random() * 0.3);
   // Dias úteis até hoje (inclusive, se hoje for dia útil).
   const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  const history: SeriesPoint[] = businessDays(tomorrow, HISTORY_DAYS, -1).map((time) => {
+  const days = businessDays(tomorrow, HISTORY_DAYS, -1);
+  const real: SeriesPoint[] = days.map((time) => {
     price *= 1 + drift + (random() - 0.5) * 0.035;
     return { time, value: round(price) };
   });
 
+  // A previsão foi feita na data X: antes dela é histórico, depois é realidade.
+  const cutoff = real.length - DAYS_SINCE_FORECAST;
+  const history = real.slice(0, cutoff);
+  const actual = real.slice(cutoff);
+  const forecastStart = new Date(`${history.at(-1)!.time}T12:00:00Z`);
+
   // Previsão continua a tendência, com intervalo de confiança que abre com o tempo.
   const trend = (random() - 0.4) * 0.003;
-  let forecastPrice = price;
-  const forecast: ForecastPoint[] = businessDays(today, FORECAST_DAYS, 1).map((time, index) => {
+  let forecastPrice = history.at(-1)!.value;
+  const forecastDays = businessDays(forecastStart, DAYS_SINCE_FORECAST + FORECAST_DAYS, 1);
+  const forecast: ForecastPoint[] = forecastDays.map((time, index) => {
     forecastPrice *= 1 + trend + (random() - 0.5) * 0.008;
     const spread = forecastPrice * 0.012 * Math.sqrt(index + 1);
     return {
@@ -182,7 +214,159 @@ export function mockProjection(ticker: string): Promise<Projection> {
     };
   });
 
-  return delay({ ticker, currency, history, forecast, generatedAt: today.toISOString() }, 200);
+  return delay(
+    {
+      ticker,
+      currency,
+      history,
+      forecast,
+      actual,
+      accuracy: accuracyOf(forecast, actual),
+      generatedAt: forecastStart.toISOString(),
+    },
+    200,
+  );
+}
+
+/* ---------- Selic ---------- */
+
+/** O Copom se reúne cerca de oito vezes por ano. */
+const COPOM_INTERVAL_DAYS = 45;
+/** Decisões do Copom, da mais antiga à mais recente; as três últimas vieram depois da previsão. */
+const selicDecisions = [10.5, 10.5, 10.75, 11.25, 12.25, 13.25, 14.25, 14.75, 15, 15, 15, 15, 15, 14.5, 14, 13.75];
+const SELIC_MEETINGS_SINCE_FORECAST = 3;
+/** Previsão feita na data X: as três primeiras já podem ser comparadas com as decisões reais. */
+const selicForecast = [14.75, 14.25, 14, 13.5, 13, 12.5, 12.25, 12, 11.75, 11.5, 11.25];
+
+function shiftDays(date: Date, days: number) {
+  const copy = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate() + days));
+  return copy.toISOString().slice(0, 10);
+}
+
+export function mockSelicProjection(): Promise<Projection> {
+  const today = new Date();
+  const count = selicDecisions.length;
+  // Uma decisão a cada reunião (a última foi há 45 dias).
+  const decisions: SeriesPoint[] = selicDecisions.map((value, index) => ({
+    time: shiftDays(today, -(count - index) * COPOM_INTERVAL_DAYS),
+    value,
+  }));
+
+  // Data X: a reunião em que a previsão foi feita.
+  const cutoff = count - SELIC_MEETINGS_SINCE_FORECAST;
+  const history = decisions.slice(0, cutoff);
+  // Depois de X: decisões reais, e hoje repete a taxa vigente.
+  const actual = [...decisions.slice(cutoff), { time: shiftDays(today, 0), value: selicDecisions[count - 1] }];
+
+  const firstForecastOffset = -(SELIC_MEETINGS_SINCE_FORECAST * COPOM_INTERVAL_DAYS);
+  const forecast: ForecastPoint[] = selicForecast.map((value, index) => ({
+    time: shiftDays(today, firstForecastOffset + index * COPOM_INTERVAL_DAYS),
+    value,
+  }));
+
+  return delay(
+    {
+      ticker: "SELIC",
+      history,
+      forecast,
+      actual,
+      accuracy: accuracyOf(forecast, actual),
+      generatedAt: `${history.at(-1)!.time}T12:00:00Z`,
+    },
+    200,
+  );
+}
+
+/* ---------- Notícias (textos inventados, só para preencher o feed) ---------- */
+
+const newsTemplates: Omit<NewsItem, "id" | "publishedAt">[] = [
+  {
+    title: "Copom sinaliza continuidade do ciclo de cortes na próxima reunião",
+    summary: "Comunicado destaca inflação em desaceleração e expectativas mais ancoradas.",
+    source: "Fonte de exemplo",
+    sentiment: "positive",
+  },
+  {
+    title: "Boletim Focus: mercado revisa projeção da Selic para o fim do ano",
+    summary: "Mediana das estimativas recua pela terceira semana seguida.",
+    source: "Fonte de exemplo",
+    sentiment: "positive",
+  },
+  {
+    title: "IPCA do mês vem acima do esperado com pressão de serviços",
+    summary: "Núcleos de inflação seguem resistentes, o que pode limitar o ritmo de cortes.",
+    source: "Fonte de exemplo",
+    sentiment: "negative",
+  },
+  {
+    title: "Ata do Copom reforça cautela diante do cenário externo",
+    summary: "Diretoria menciona incerteza sobre juros nos Estados Unidos e câmbio.",
+    source: "Fonte de exemplo",
+    sentiment: "neutral",
+  },
+  {
+    title: "Juros futuros recuam após dados de atividade mais fracos",
+    summary: "Curva precifica nova redução de 0,50 ponto na próxima decisão.",
+    source: "Fonte de exemplo",
+    sentiment: "positive",
+  },
+  {
+    title: "Real se desvaloriza e reacende debate sobre ritmo da política monetária",
+    source: "Fonte de exemplo",
+    sentiment: "negative",
+  },
+  {
+    title: "Economistas divergem sobre a taxa neutra de juros no Brasil",
+    summary: "Estimativas variam entre 4,5% e 5,5% em termos reais.",
+    source: "Fonte de exemplo",
+    sentiment: "neutral",
+  },
+];
+
+export function mockNews(topic: string): Promise<NewsItem[]> {
+  const now = Date.now();
+  const items = newsTemplates.map((template, index) => ({
+    ...template,
+    id: `${topic}-${index}`,
+    // Uma notícia a cada ~5 horas, da mais recente para a mais antiga.
+    publishedAt: new Date(now - (index * 5 + 1) * 3_600_000).toISOString(),
+  }));
+  return delay(items, 250);
+}
+
+/* ---------- Favoritos (guardados no navegador para sobreviver ao recarregar) ---------- */
+
+const FAVORITES_KEY = "sawa:mock-favorites";
+let memoryFavorites: Favorites = { exchanges: [], stocks: [] };
+
+function readFavorites(): Favorites {
+  try {
+    const saved = localStorage.getItem(FAVORITES_KEY);
+    if (saved) memoryFavorites = JSON.parse(saved);
+  } catch {
+    // Sem acesso ao localStorage (ex.: janela anônima): fica só na memória.
+  }
+  return memoryFavorites;
+}
+
+function writeFavorites(favorites: Favorites) {
+  memoryFavorites = favorites;
+  try {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+  } catch {
+    // Idem: segue só na memória.
+  }
+}
+
+export function mockFavorites(): Promise<Favorites> {
+  return delay(readFavorites());
+}
+
+export function mockSetFavorite(kind: FavoriteKind, id: string, favorite: boolean): Promise<void> {
+  const current = readFavorites();
+  const ids = current[kind].filter((value) => value !== id);
+  writeFavorites({ ...current, [kind]: favorite ? [...ids, id] : ids });
+  return delay(undefined);
 }
 
 export function mockDeleteAccount(): Promise<void> {

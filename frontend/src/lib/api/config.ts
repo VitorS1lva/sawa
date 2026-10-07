@@ -12,7 +12,13 @@ export const endpoints = {
   exchanges: "/api/bolsas/",
   stocks: "/api/ativos/", // ?bolsa=B3
   projection: (ticker: string) => `/api/ativos/${encodeURIComponent(ticker)}/previsao/`,
+  selicProjection: "/api/selic/previsao/",
+  news: "/api/noticias/", // ?tema=selic
   chat: "/api/chat/",
+  /** GET lista; POST { kind, id } adiciona. */
+  favorites: "/api/favoritos/",
+  /** DELETE remove um favorito. */
+  favorite: (kind: string, id: string) => `/api/favoritos/${kind}/${encodeURIComponent(id)}/`,
   /** DELETE exclui a conta do usuário logado. */
   account: "/api/conta/",
 };
