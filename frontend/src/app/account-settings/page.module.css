@@ -1,0 +1,20 @@
+.page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cartão no centro da tela, abaixo do menu fixo. */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 108px 16px 32px;
+}
+
+@media (max-width: 1024px) {
+  .main {
+    padding-top: calc(env(safe-area-inset-top) + 88px);
+  }
+}

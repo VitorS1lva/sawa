@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { deleteAccount } from "./account";
 import { sendChatMessage } from "./chat";
 import { getExchanges, getProjection, getStocks } from "./market";
 
@@ -35,6 +36,10 @@ export function useProjections(tickers: string[]) {
       queryFn: () => getProjection(ticker),
     })),
   });
+}
+
+export function useDeleteAccount() {
+  return useMutation({ mutationFn: deleteAccount });
 }
 
 export function useSendChatMessage() {

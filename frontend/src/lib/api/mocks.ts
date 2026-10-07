@@ -185,6 +185,10 @@ export function mockProjection(ticker: string): Promise<Projection> {
   return delay({ ticker, currency, history, forecast, generatedAt: today.toISOString() }, 200);
 }
 
+export function mockDeleteAccount(): Promise<void> {
+  return delay(undefined, 600);
+}
+
 export function mockChatReply({ messages, tickers }: ChatRequest): Promise<ChatMessage> {
   const question = messages.at(-1)?.content ?? "";
   const context = tickers.length

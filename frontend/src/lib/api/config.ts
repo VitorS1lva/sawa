@@ -13,4 +13,6 @@ export const endpoints = {
   stocks: "/api/ativos/", // ?bolsa=B3
   projection: (ticker: string) => `/api/ativos/${encodeURIComponent(ticker)}/previsao/`,
   chat: "/api/chat/",
+  /** DELETE exclui a conta do usuário logado. */
+  account: "/api/conta/",
 };

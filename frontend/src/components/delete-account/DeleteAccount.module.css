@@ -1,0 +1,131 @@
+.card {
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+}
+
+.description {
+  margin: 0 0 20px;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--sawa-text-muted);
+}
+
+/* minmax(0, 1fr): o campo encolhe junto com o cartão em telas estreitas. */
+.form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.8125rem;
+  color: var(--sawa-text);
+}
+
+.input {
+  font: inherit;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  color: var(--sawa-text);
+  background-color: var(--sawa-surface-deep);
+  border: 1px solid var(--sawa-border);
+  border-radius: calc(var(--sawa-radius) - 4px);
+  padding: 10px 12px;
+}
+
+.input::placeholder {
+  color: var(--sawa-text-muted);
+  opacity: 0.4;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--sawa-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sawa-accent) 25%, transparent);
+}
+
+.error {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  color: var(--sawa-text);
+  background-color: var(--sawa-surface-deep);
+  border-left: 2px solid var(--sawa-accent);
+  border-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.danger,
+.secondary {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: calc(var(--sawa-radius) - 4px);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.danger {
+  color: var(--sawa-text);
+  background-color: var(--sawa-accent);
+  border: none;
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--sawa-accent-hover);
+}
+
+.secondary {
+  color: var(--sawa-text-muted);
+  background: none;
+  border: 1px solid var(--sawa-border);
+}
+
+.secondary:hover:not(:disabled) {
+  color: var(--sawa-text);
+  background-color: var(--sawa-hover);
+}
+
+.danger:disabled,
+.secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.danger:focus-visible,
+.secondary:focus-visible {
+  outline: 2px solid var(--sawa-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 18px;
+  }
+
+  /* Botões em coluna, com a ação principal em cima. */
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  /* Evita o zoom automático do iPhone ao focar o campo. */
+  .input {
+    font-size: 1rem;
+  }
+}
