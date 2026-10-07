@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
 import { ChevronLeft, Menu, X } from "lucide-react";
 import { Popover } from "@/components/popover/Popover";
 import { headerConfig, type HeaderItem } from "./header.config";
-import { RubyViewer } from "@/components/ruby/RubyViewer";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import styles from "./Header.module.css";
 
@@ -91,9 +91,8 @@ export function Header({ items, panels: getPanels, onAction, brandHref = "/" }: 
     <header className={styles.header}>
       <div ref={barRef} className={styles.bar}>
         <a href={brandHref} className={styles.brand} aria-label={headerConfig.brand}>
-          <span className={styles.brandIcon} aria-hidden="true">
-            <RubyViewer />
-          </span>
+          {/* Foto do rubi 3D: um canvas WebGL só para o ícone pesaria 1 MB de three.js em toda página. */}
+          <Image className={styles.brandIcon} src="/images/ruby-icon.webp" alt="" width={63} height={96} unoptimized priority />
           <span className={styles.brandName}>{headerConfig.brand}</span>
         </a>
 

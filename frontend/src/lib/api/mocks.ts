@@ -8,7 +8,7 @@ const HISTORY_DAYS = 180;
 const FORECAST_DAYS = 30;
 
 /** Simula o tempo de resposta da rede. */
-function delay<T>(value: T, ms = 400): Promise<T> {
+function delay<T>(value: T, ms = 150): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), ms));
 }
 
@@ -182,7 +182,7 @@ export function mockProjection(ticker: string): Promise<Projection> {
     };
   });
 
-  return delay({ ticker, currency, history, forecast, generatedAt: today.toISOString() }, 500);
+  return delay({ ticker, currency, history, forecast, generatedAt: today.toISOString() }, 200);
 }
 
 export function mockChatReply({ messages, tickers }: ChatRequest): Promise<ChatMessage> {
@@ -195,5 +195,5 @@ export function mockChatReply({ messages, tickers }: ChatRequest): Promise<ChatM
     `${context}Ainda estou em modo de demonstração, então não consigo analisar "${question.slice(0, 80)}" de verdade. ` +
     "Quando o agente de IA estiver conectado, as respostas virão daqui.";
 
-  return delay({ id: crypto.randomUUID(), role: "assistant", content }, 900);
+  return delay({ id: crypto.randomUUID(), role: "assistant", content }, 600);
 }

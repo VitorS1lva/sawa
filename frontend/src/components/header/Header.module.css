@@ -40,9 +40,8 @@
 
 .brandIcon {
   display: block;
-  width: 20px;
-  height: 50px;
-  margin: -6px 0; 
+  width: auto;
+  height: 36px;
 }
 
 .brandName {

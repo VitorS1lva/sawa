@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { SendHorizontal } from "lucide-react";
+import { Card } from "@/components/card/Card";
 import { useSendChatMessage } from "@/lib/api/queries";
 import type { ChatMessage } from "@/lib/api/types";
 import { chatPanelConfig as config } from "./ChatPanel.config";
@@ -20,7 +21,6 @@ export function ChatPanel({ tickers }: ChatPanelProps) {
   const [draft, setDraft] = useState("");
   const send = useSendChatMessage();
   const listRef = useRef<HTMLDivElement>(null);
-  const titleId = useId();
 
   // Mantém a última mensagem visível.
   useEffect(() => {
@@ -56,10 +56,7 @@ export function ChatPanel({ tickers }: ChatPanelProps) {
   }
 
   return (
-    <section className={styles.panel} aria-labelledby={titleId}>
-      <h2 id={titleId} className={styles.title}>
-        {config.title}
-      </h2>
+    <Card title={config.title}>
 
       <div ref={listRef} className={styles.messages} role="log" aria-live="polite">
         {messages.map((message) => (
@@ -99,6 +96,6 @@ export function ChatPanel({ tickers }: ChatPanelProps) {
         </button>
       </form>
       <p className={styles.disclaimer}>{config.disclaimer}</p>
-    </section>
+    </Card>
   );
 }

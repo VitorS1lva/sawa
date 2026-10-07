@@ -1,16 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { AboutPanel } from "@/components/about-panel/AboutPanel";
-import { aboutPanel } from "@/components/about-panel/AboutPanel.configs";
 import { AuthForm } from "@/components/auth-form/AuthForm";
 import { loginConfig, signupConfig } from "@/components/auth-form/auth.config";
-import { DisclaimerPanel } from "@/components/disclaimer-panel/DisclaimerPanel";
-import { disclaimerPanel } from "@/components/disclaimer-panel/DisclaimerPanel.configs";
-import { FeaturesAtuaisPanel } from "@/components/features-atuais-panel/FeaturesAtuaisPanel";
-import { featuresAtuaisPanel } from "@/components/features-atuais-panel/FeaturesAtuaisPanel.configs";
-import { FeaturesFuturasPanel } from "@/components/features-futuras-panel/FeaturesFuturasPanel";
-import { featuresFuturasPanel } from "@/components/features-futuras-panel/FeaturesFuturasPanel.configs";
+import { ListPanel, TextPanel } from "@/components/menu-panels/MenuPanels";
+import {
+  aboutPanel,
+  disclaimerPanel,
+  featuresAtuaisPanel,
+  featuresFuturasPanel,
+} from "@/components/menu-panels/menuPanels.config";
 import { routes } from "@/lib/routes";
 import { Header } from "./Header";
 import { landingHeaderItems } from "./header.config";
@@ -23,10 +22,10 @@ export function LandingHeader() {
     <Header
       items={landingHeaderItems}
       panels={(openPanel) => ({
-        about: { title: aboutPanel.title, content: <AboutPanel /> },
-        "features-atuais": { title: featuresAtuaisPanel.title, content: <FeaturesAtuaisPanel /> },
-        "features-futuras": { title: featuresFuturasPanel.title, content: <FeaturesFuturasPanel /> },
-        disclaimer: { title: disclaimerPanel.title, content: <DisclaimerPanel /> },
+        about: { title: aboutPanel.title, content: <TextPanel {...aboutPanel} /> },
+        "features-atuais": { title: featuresAtuaisPanel.title, content: <ListPanel {...featuresAtuaisPanel} /> },
+        "features-futuras": { title: featuresFuturasPanel.title, content: <ListPanel {...featuresFuturasPanel} /> },
+        disclaimer: { title: disclaimerPanel.title, content: <TextPanel {...disclaimerPanel} /> },
         login: {
           title: loginConfig.title,
           content: (
