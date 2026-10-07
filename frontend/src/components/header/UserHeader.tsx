@@ -7,12 +7,17 @@ import { routes } from "@/lib/routes";
 import { Header } from "./Header";
 import { userHeaderItems } from "./header.config";
 
-/** Menu da área logada: "Minha conta" abre o balão de edição e "Sair" volta para o início. */
+/**
+ * Menu da área logada: "Minha conta" abre o balão de edição, o ícone de usuário
+ * leva às configurações da conta e "Sair" volta para o início.
+ */
 export function UserHeader() {
   const router = useRouter();
 
   function handleAction(id: string) {
-    if (id === "logout") {
+    if (id === "settings") {
+      router.push(routes.accountSettings);
+    } else if (id === "logout") {
       // TODO: encerrar a sessão na API Django quando o back-end estiver pronto.
       router.replace(routes.home);
     }

@@ -77,6 +77,18 @@
     background-color 0.2s ease;
 }
 
+/* Botão só com ícone (ex.: configurações da conta). */
+.iconButton {
+  display: inline-grid;
+  place-items: center;
+  padding: 8px 10px;
+}
+
+.iconButton svg {
+  width: 20px;
+  height: 20px;
+}
+
 .button:hover,
 .button[aria-expanded="true"] {
   color: var(--sawa-text);
@@ -183,6 +195,14 @@
     padding: 12px 14px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  .sheetItem svg {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    vertical-align: -3px;
   }
 
   .sheetItem:active {

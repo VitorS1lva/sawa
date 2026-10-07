@@ -106,13 +106,15 @@ export function Header({ items, panels: getPanels, onAction, brandHref = "/" }: 
               <div key={item.id} className={styles.item}>
                 <button
                   type="button"
-                  className={styles.button}
+                  className={item.icon ? `${styles.button} ${styles.iconButton}` : styles.button}
                   data-accent={item.accent}
                   aria-expanded={panel ? isOpen : undefined}
                   aria-controls={panel ? popoverId : undefined}
+                  aria-label={item.icon ? item.label : undefined}
+                  title={item.icon ? item.label : undefined}
                   onClick={() => select(item.id, true)}
                 >
-                  {item.label}
+                  {item.icon ? <item.icon aria-hidden="true" /> : item.label}
                 </button>
 
                 {panel && isOpen && !isMobile && (
@@ -158,6 +160,7 @@ export function Header({ items, panels: getPanels, onAction, brandHref = "/" }: 
                     data-accent={item.accent}
                     onClick={() => select(item.id, false)}
                   >
+                    {item.icon && <item.icon aria-hidden="true" />}
                     {item.label}
                   </button>
                 ))}

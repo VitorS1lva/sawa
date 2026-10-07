@@ -1,5 +1,10 @@
-/** Um botão do menu. Se não tiver balão, o Header chama `onAction` com o `id`. */
-export type HeaderItem = { id: string; label: string; accent: boolean };
+import { UserRound, type LucideIcon } from "lucide-react";
+
+/**
+ * Um botão do menu. Se não tiver balão, o Header chama `onAction` com o `id`.
+ * Com `icon`, o botão mostra só o ícone no desktop (o `label` vira a descrição acessível).
+ */
+export type HeaderItem = { id: string; label: string; accent: boolean; icon?: LucideIcon };
 
 export const headerConfig = {
   brand: "sawa",
@@ -17,8 +22,9 @@ export const landingHeaderItems: HeaderItem[] = [
   { id: "signup", label: "Sign up", accent: true },
 ];
 
-/** Menu da área logada (/user-page). */
+/** Menu da área logada. */
 export const userHeaderItems: HeaderItem[] = [
   { id: "account", label: "Minha conta", accent: false },
+  { id: "settings", label: "Configurações da conta", accent: false, icon: UserRound },
   { id: "logout", label: "Sair", accent: true },
 ];
