@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   createChart,
   LineSeries,
@@ -11,6 +11,7 @@ import {
   type MouseEventParams,
   type Time,
 } from "lightweight-charts";
+import { Card } from "@/components/card/Card";
 import type { Projection, SeriesPoint } from "@/lib/api/types";
 import { projectionChartConfig as config } from "./ProjectionChart.config";
 import styles from "./ProjectionChart.module.css";
@@ -49,7 +50,6 @@ export function ProjectionChart({ series }: { series: ChartSeries[] }) {
   const chartRef = useRef<IChartApi | null>(null);
   const linesRef = useRef(new Map<string, LineSet>());
   const [hover, setHover] = useState<Record<string, number> | null>(null);
-  const titleId = useId();
 
   const loaded = series.filter((s): s is ChartSeries & { projection: Projection } => !!s.projection);
   const indexed = loaded.length > 1;
@@ -154,13 +154,10 @@ export function ProjectionChart({ series }: { series: ChartSeries[] }) {
   }, [dataKey]);
 
   return (
-    <section className={styles.panel} aria-labelledby={titleId}>
-      <header className={styles.header}>
-        <h2 id={titleId} className={styles.title}>
-          {config.title}
-        </h2>
-        <span className={styles.scale}>{indexed ? "Variação % no período" : "Preço"}</span>
-      </header>
+    <Card
+      title={config.title}
+      aside={<span className={styles.scale}>{indexed ? "Variação % no período" : "Preço"}</span>}
+    >
 
       {series.length > 0 && (
         <ul className={styles.legend}>
@@ -206,6 +203,6 @@ export function ProjectionChart({ series }: { series: ChartSeries[] }) {
         </span>
         <span className={styles.disclaimer}>{config.disclaimer}</span>
       </footer>
-    </section>
+    </Card>
   );
 }

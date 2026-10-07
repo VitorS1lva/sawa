@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
+import { Card } from "@/components/card/Card";
 import { Search } from "lucide-react";
 import styles from "./CheckList.module.css";
 
@@ -50,7 +51,6 @@ export function CheckList({
   className,
 }: CheckListProps) {
   const [query, setQuery] = useState("");
-  const titleId = useId();
   const name = useId();
 
   const filtered = useMemo(() => {
@@ -113,17 +113,18 @@ export function CheckList({
   }
 
   return (
-    <section className={className ? `${styles.panel} ${className}` : styles.panel} aria-labelledby={titleId}>
-      <header className={styles.header}>
-        <h2 id={titleId} className={styles.title}>
-          {title}
-        </h2>
-        {multiple && selected.length > 0 && (
+    <Card
+      title={title}
+      className={className}
+      aside={
+        multiple &&
+        selected.length > 0 && (
           <button type="button" className={styles.clear} onClick={() => onChange([])}>
             Limpar ({selected.length})
           </button>
-        )}
-      </header>
+        )
+      }
+    >
 
       <div className={styles.search}>
         <Search className={styles.searchIcon} aria-hidden="true" />
@@ -140,6 +141,6 @@ export function CheckList({
       {limitReached && <p className={styles.hint}>Limite de {max} itens marcados.</p>}
 
       <div className={styles.scroll}>{body}</div>
-    </section>
+    </Card>
   );
 }
