@@ -20,7 +20,9 @@ export const projectionChartConfig = {
   maxSeries: seriesColors.length,
   emptyText: "Selecione uma ou mais ações para ver o histórico e a previsão.",
   disclaimer: "Previsões não são recomendação de investimento.",
-  legend: { history: "Histórico", forecast: "Previsão" },
+  legend: { history: "Histórico", forecast: "Previsão", actual: "Realidade" },
+  /** Texto antes da porcentagem de acurácia na legenda. */
+  accuracyLabel: "Acurácia da ferramenta até agora",
   /** Cores do próprio gráfico (o canvas não lê variáveis CSS). Iguais ao theme.css. */
   theme: {
     text: "#9a9aa2",
