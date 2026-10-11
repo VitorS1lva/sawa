@@ -25,5 +25,33 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
 
+  # API de WhatsApp: envia o código de confirmação do cadastro.
+  # Painel: http://localhost:8080/manager (entre com a chave AUTHENTICATION_API_KEY abaixo).
+  evolution:
+    image: evoapicloud/evolution-api:v2.3.1
+    restart: unless-stopped
+    environment:
+      SERVER_URL: http://localhost:8080
+      # Chave só para desenvolvimento local (como a senha do banco acima). Para trocar, crie
+      # .devcontainer/.env com EVOLUTION_API_KEY=... e use o mesmo valor no .env da raiz.
+      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY:-sawa-dev-evolution-key}
+      DATABASE_ENABLED: "true"
+      DATABASE_PROVIDER: postgresql
+      # Mesmo PostgreSQL do projeto, num schema separado.
+      DATABASE_CONNECTION_URI: postgresql://previsor:previsor@db:5432/previsor?schema=evolution_api
+      DATABASE_CONNECTION_CLIENT_NAME: evolution
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: redis://redis:6379/6
+      CACHE_REDIS_PREFIX_KEY: evolution
+      CACHE_LOCAL_ENABLED: "false"
+      WEBHOOK_GLOBAL_ENABLED: "false"
+    volumes:
+      # Sessão do WhatsApp: sobrevive à recriação do container (não precisa ler o QR de novo).
+      - evolution_instances:/evolution/instances
+    depends_on:
+      - db
+      - redis
+
 volumes:
   pgdata:
+  evolution_instances:

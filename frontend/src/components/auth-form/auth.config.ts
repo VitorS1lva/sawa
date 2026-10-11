@@ -1,7 +1,7 @@
 export type FormField = {
   name: string;
   label: string;
-  type: "text" | "email" | "password";
+  type: "text" | "email" | "tel" | "password";
   placeholder?: string;
   autoComplete?: string;
   required?: boolean;
@@ -14,7 +14,10 @@ export type AuthFormConfig = {
   title: string;
   fields: FormField[];
   submitLabel: string;
-  successMessage: string;
+  /** Texto do botão enquanto o envio está em andamento. */
+  pendingLabel?: string;
+  /** Mostrado quando o envio dá certo e ninguém muda de tela (ex.: dados da conta). */
+  successMessage?: string;
   mismatchMessage?: string;
   /** Link no rodapé do balão para trocar de formulário (opcional). */
   switchText?: string;
@@ -42,7 +45,7 @@ export const loginConfig: AuthFormConfig = {
     },
   ],
   submitLabel: "Entrar",
-  successMessage: "Login disponível em breve.",
+  pendingLabel: "Entrando...",
   switchText: "Ainda não tem conta?",
   switchLabel: "Criar conta",
 };
@@ -67,6 +70,14 @@ export const signupConfig: AuthFormConfig = {
       required: true,
     },
     {
+      name: "phone",
+      label: "WhatsApp",
+      type: "tel",
+      placeholder: "(11) 99999-9999",
+      autoComplete: "tel",
+      required: true,
+    },
+    {
       name: "password",
       label: "Senha",
       type: "password",
@@ -86,7 +97,7 @@ export const signupConfig: AuthFormConfig = {
     },
   ],
   submitLabel: "Criar conta",
-  successMessage: "Cadastro disponível em breve.",
+  pendingLabel: "Criando conta...",
   mismatchMessage: "As senhas não coincidem.",
   switchText: "Já tem conta?",
   switchLabel: "Entrar",

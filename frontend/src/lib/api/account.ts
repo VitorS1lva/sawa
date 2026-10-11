@@ -1,9 +1,13 @@
-import { api, setAccessToken } from "./client";
-import { endpoints, USE_MOCKS } from "./config";
+import { api } from "./client";
+import { endpoints, mocked } from "./config";
+import { toApiError } from "./errors";
 
-/** Exclui a conta do usuário logado e descarta o token da sessão. */
+/** Exclui a conta do usuário logado. Quem chama encerra a sessão em seguida. */
 export async function deleteAccount(): Promise<void> {
-  if (USE_MOCKS) await (await import("./mocks")).mockDeleteAccount();
-  else await api.delete(endpoints.account);
-  setAccessToken(null);
+  if (mocked("account")) return (await import("./mocks")).mockDeleteAccount();
+  try {
+    await api.delete(endpoints.auth.me);
+  } catch (error) {
+    throw toApiError(error);
+  }
 }

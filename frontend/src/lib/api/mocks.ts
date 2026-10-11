@@ -2,7 +2,10 @@
  * Dados de exemplo usados enquanto o back-end não existe (veja USE_MOCKS em config.ts).
  * Os preços são inventados, mas sempre iguais para o mesmo ticker.
  */
+import { ApiError } from "./errors";
 import type {
+  AuthTokens,
+  AuthUser,
   ChatMessage,
   ChatRequest,
   Exchange,
@@ -10,8 +13,11 @@ import type {
   Favorites,
   ForecastPoint,
   NewsItem,
+  PendingSignup,
   Projection,
   SeriesPoint,
+  Session,
+  SignupInput,
   Stock,
 } from "./types";
 
@@ -369,7 +375,68 @@ export function mockSetFavorite(kind: FavoriteKind, id: string, favorite: boolea
   return delay(undefined);
 }
 
+/* ---------- Autenticação (aceita qualquer login; o código "000000" simula um código errado) ---------- */
+
+const MOCK_USER_KEY = "sawa:mock-user";
+const mockTokens: AuthTokens = { access: "mock-access", refresh: "mock-refresh" };
+
+function saveMockUser(user: AuthUser) {
+  try {
+    localStorage.setItem(MOCK_USER_KEY, JSON.stringify(user));
+  } catch {
+    // Sem localStorage: o usuário de exemplo só vale nesta aba.
+  }
+}
+
+function readMockUser(email = "voce@exemplo.com"): AuthUser {
+  try {
+    const saved = localStorage.getItem(MOCK_USER_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {
+    // Idem.
+  }
+  return { id: 1, name: email.split("@")[0], email, phone: null, date_joined: new Date().toISOString() };
+}
+
+export function mockSignup({ name, email, phone }: SignupInput): Promise<PendingSignup> {
+  const digits = phone.replace(/\D/g, "");
+  const normalized = digits.length <= 11 ? `55${digits}` : digits;
+  saveMockUser({ id: 1, name, email: email.trim().toLowerCase(), phone: normalized, date_joined: new Date().toISOString() });
+  const masked = `+${normalized.slice(0, 2)} ${normalized.slice(2, 4)} •••••-${normalized.slice(-4)}`;
+  return delay({ email: email.trim().toLowerCase(), phone: masked, resend_available_in: 60 }, 400);
+}
+
+export async function mockVerifyCode(email: string, code: string): Promise<Session> {
+  await delay(undefined, 400);
+  if (code === "000000") throw new ApiError(400, "Código incorreto.", "invalid");
+  return { ...mockTokens, user: readMockUser(email) };
+}
+
+export function mockResendCode(): Promise<{ resend_available_in: number }> {
+  return delay({ resend_available_in: 60 });
+}
+
+export function mockLogin(email: string): Promise<Session> {
+  const user = readMockUser(email.trim().toLowerCase());
+  saveMockUser(user);
+  return delay({ ...mockTokens, user }, 400);
+}
+
+export async function mockRefresh(refresh: string): Promise<AuthTokens> {
+  if (refresh !== mockTokens.refresh) throw new ApiError(401, "Sessão expirada.");
+  return delay(mockTokens);
+}
+
+export function mockMe(): Promise<AuthUser> {
+  return delay(readMockUser());
+}
+
 export function mockDeleteAccount(): Promise<void> {
+  try {
+    localStorage.removeItem(MOCK_USER_KEY);
+  } catch {
+    // Sem localStorage: nada a apagar.
+  }
   return delay(undefined, 600);
 }
 

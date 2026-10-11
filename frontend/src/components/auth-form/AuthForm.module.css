@@ -1,12 +1,15 @@
 /* ---------- Formulários ---------- */
 
+/* minmax(0, 1fr): os campos encolhem com o balão, em vez de vazar para fora dele. */
 .form {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 
 .field {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
 }
 
@@ -35,6 +38,16 @@
   opacity: 0.6;
 }
 
+.input[aria-invalid="true"] {
+  border-color: var(--sawa-accent);
+}
+
+.fieldError {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--sawa-text);
+}
+
 .input:focus {
   outline: none;
   border-color: var(--sawa-accent);
@@ -55,8 +68,13 @@
   transition: background-color 0.2s ease;
 }
 
-.submit:hover {
+.submit:hover:not(:disabled) {
   background-color: var(--sawa-accent-hover);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .submit:focus-visible,
