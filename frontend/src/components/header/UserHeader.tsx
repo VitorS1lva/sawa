@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { AccountPanel } from "@/components/account-panel/AccountPanel";
 import { accountPanel } from "@/components/account-panel/AccountPanel.configs";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { routes } from "@/lib/routes";
 import { Header } from "./Header";
 import { userHeaderItems } from "./header.config";
@@ -13,13 +14,14 @@ import { userHeaderItems } from "./header.config";
  */
 export function UserHeader() {
   const router = useRouter();
+  const auth = useAuth();
 
-  function handleAction(id: string) {
+  async function handleAction(id: string) {
     if (id === "settings") {
       router.push(routes.accountSettings);
     } else if (id === "logout") {
-      // TODO: encerrar a sessão na API Django quando o back-end estiver pronto.
       router.replace(routes.home);
+      await auth.signOut();
     }
   }
 

@@ -6,10 +6,11 @@
   "features": {
     "ghcr.io/devcontainers/features/node:1": { "version": "lts" }
   },
-  "forwardPorts": [3000, 8000],
+  "forwardPorts": [3000, 8000, "evolution:8080"],
   "portsAttributes": {
     "3000": { "label": "Frontend (Next.js)" },
-    "8000": { "label": "Backend (Django)" }
+    "8000": { "label": "Backend (Django)" },
+    "evolution:8080": { "label": "WhatsApp (Evolution API)" }
   },
   "customizations": {
     "vscode": {

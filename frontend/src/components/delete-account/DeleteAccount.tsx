@@ -2,9 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/card/Card";
 import { useDeleteAccount } from "@/lib/api/queries";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { routes } from "@/lib/routes";
 import { deleteAccountConfig as config } from "./deleteAccount.config";
 import styles from "./DeleteAccount.module.css";
@@ -17,7 +17,7 @@ export function DeleteAccount() {
   const [confirming, setConfirming] = useState(false);
   const [typed, setTyped] = useState("");
   const remove = useDeleteAccount();
-  const queryClient = useQueryClient();
+  const auth = useAuth();
   const router = useRouter();
 
   const canSubmit = typed.trim().toUpperCase() === config.confirmWord && !remove.isPending;
@@ -34,9 +34,9 @@ export function DeleteAccount() {
 
     remove.mutate(undefined, {
       onSuccess: () => {
-        // Nada do usuário excluído deve continuar em cache.
-        queryClient.clear();
         router.replace(routes.home);
+        // Limpa os tokens e o cache; o servidor já invalidou a sessão ao excluir a conta.
+        auth.endSession();
       },
     });
   }

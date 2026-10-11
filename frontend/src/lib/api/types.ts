@@ -46,6 +46,27 @@ export type Projection = {
   generatedAt: string; // data/hora ISO em que a previsão foi calculada (a data X)
 };
 
+/* ---------- Autenticação ---------- */
+
+export type AuthUser = {
+  id: number;
+  name: string;
+  email: string;
+  /** WhatsApp só com dígitos e DDI (ex.: "5511999998888"). */
+  phone: string | null;
+  date_joined: string;
+};
+
+export type AuthTokens = { access: string; refresh: string };
+
+/** Resposta do login e da confirmação de e-mail. */
+export type Session = AuthTokens & { user: AuthUser };
+
+export type SignupInput = { name: string; email: string; phone: string; password: string };
+
+/** Cadastro criado, esperando o código enviado pelo WhatsApp. `phone` vem mascarado ("+55 11 •••••-8888"). */
+export type PendingSignup = { email: string; phone: string; resend_available_in: number };
+
 export type NewsSentiment = "positive" | "neutral" | "negative";
 
 /** Notícia já coletada e analisada pelo back-end (GET /api/noticias/?tema=selic). */

@@ -22,6 +22,12 @@ export const landingHeaderItems: HeaderItem[] = [
   { id: "signup", label: "Sign up", accent: true },
 ];
 
+/** Página inicial com o usuário já logado: troca Login e Sign up por "Minha área". */
+export const loggedInLandingItems: HeaderItem[] = [
+  ...landingHeaderItems.filter((item) => item.id !== "login" && item.id !== "signup"),
+  { id: "user-area", label: "Minha área", accent: true },
+];
+
 /** Menu da área logada. */
 export const userHeaderItems: HeaderItem[] = [
   { id: "account", label: "Minha conta", accent: false },

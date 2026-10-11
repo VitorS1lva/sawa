@@ -1,0 +1,7 @@
+.loading {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  font-size: 0.875rem;
+  color: var(--sawa-text-muted);
+}
